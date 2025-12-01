@@ -1,87 +1,96 @@
-Overview
+# Language Modeling Lab — Modified Version
 
-This repository contains my implementation for the Language Modeling Lab (Lab 1). The goal of this assignment was to load a text dataset, tokenize it, group it into fixed-length sequences, and prepare it for training a causal language model.
-In this version, I made specific targeted modifications to study how certain hyperparameters affect the preprocessing and training workflow.
+## Overview
+This repository contains my implementation for the Language Modeling Lab (Lab 1). The goal of this assignment was to load a text dataset, tokenize it, group the tokens into fixed-length sequences, and prepare them for a language-modeling task.
 
-Dataset
+I introduced a few targeted modifications to better understand how certain hyperparameters affect preprocessing and model training behavior.
 
-The dataset is loaded using the datasets library from HuggingFace. It provides a simple text corpus suitable for preparing training sequences for a language model.
+---
 
-Modifications Implemented
+## Dataset
+The dataset is loaded using the **HuggingFace `datasets` library** and provides a simple text corpus suitable for tokenization and sequence preparation.
 
-As part of customizing the assignment, I introduced three intentional changes to the model preparation pipeline.
+---
 
-1. Updated Sequence Length (Block Size)
+## Modifications Implemented
+Below are the exact updates I applied to customize the assignment.
 
-Old Value: 128
+---
 
-New Value: 256
+### 1. Updated Sequence Length (Block Size)
+- **Previous:** 128  
+- **Updated:** **256**
 
-This allows the model to observe longer sequences at once, enabling it to learn longer contextual patterns in text.
+This allows the model to receive longer text sequences in each training example, giving it more context to learn from.
 
-2. Updated Batch Size
+---
 
-Old Value: 8
+### 2. Updated Batch Size
+- **Previous:** 8  
+- **Updated:** **16**
 
-New Value: 16
+A bigger batch size improves training stability and makes better use of available memory.
 
-A larger batch size provides more stable gradient updates and slightly improves training efficiency.
+---
 
-3. Updated Optimizer & Hyperparameters
+### 3. Updated Optimizer and Training Hyperparameters
+I modified several training parameters to evaluate how they influence optimization.
 
-I modified the training-related hyperparameters to explore their effect on optimization dynamics.
+| Parameter        | Previous       | Updated                |
+|------------------|----------------|-------------------------|
+| Learning Rate    | 5e-4           | **3e-4**               |
+| Optimizer        | AdamW (default) | **AdamW with weight decay** |
+| Weight Decay     | None           | **0.01**               |
+| Warmup Steps     | None           | **100**                |
+| Epochs           | Higher count   | **2 epochs**           |
 
-Parameter	Previous	Updated
-Learning Rate	5e-4	3e-4
-Optimizer	AdamW (default)	AdamW with weight_decay=0.01
-Weight Decay	None	0.01
-Warmup Steps	None	100
-Epochs	Higher count	2
+These adjustments help improve regularization and gradient smoothness during training.
 
-These updates introduce better regularization and smoother optimization behavior.
+---
 
-Pipeline Summary
+## Pipeline Summary
+The complete workflow includes:
 
-The workflow includes:
+1. Loading the dataset  
+2. Tokenizing text using a pretrained tokenizer  
+3. Splitting tokens into fixed-length sequences (`block_size = 256`)  
+4. Preparing padded batches (`batch_size = 16`)  
+5. Using AdamW with modified hyperparameters for training  
 
-Loading the dataset
+---
 
-Tokenizing text using a pretrained tokenizer
+## Results
+The goal of these changes was to explore how modifications to:
 
-Grouping tokens into fixed-length sequences (block_size=256)
+- sequence length  
+- batch size  
+- optimizer settings  
 
-Creating padded training batches (batch_size=16)
+impact training dynamics.  
+With the updated configuration, the training process became more stable and better regularized.
 
-Configuring an AdamW optimizer with modified hyperparameters
+---
 
-This setup supports an efficient and flexible preprocessing pipeline for language model training.
+## How to Run
+Install dependencies:
 
-Results
-
-The goal of these changes was not to maximize performance, but to better understand:
-
-how longer sequences influence context learning
-
-how larger batches affect stability
-
-how optimizer modifications change training smoothness
-
-The updated settings provided more stable training behavior and better regularization.
-
-How to Run
-
-Install necessary dependencies:
-
+```bash
 pip install transformers datasets torch accelerate
-
+```
 
 Run the notebook or script:
 
+```bash
 python train.py
+```
+
+or open the `.ipynb` notebook in Jupyter / Google Colab.
+
+---
+
+## Conclusion
+This modified version of the lab highlights how adjusting core parameters such as block size, batch size, and optimizer settings can influence a language model’s training behavior. These changes make the pipeline more flexible and provide insight into how preprocessing affects model performance.
+
+---
 
 
-or open the .ipynb file in Jupyter/Colab.
-
-Conclusion
-
-This modified version of the lab demonstrates how adjusting block size, batch size, and optimizer settings impacts the language model preprocessing workflow. The changes help reinforce important concepts around tokenization, batching, and hyperparameter configuration.
